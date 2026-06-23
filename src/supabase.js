@@ -11,12 +11,14 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  throw new Error(
-    '[Supabase] SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is not set in .env'
+  console.error(
+    '[Supabase] ⚠️  SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is not set. ' +
+    'Image uploads will fail. Set these in your Vercel environment variables.'
   );
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+// createClient is safe to call even with empty strings — it will fail at request time
+const supabase = createClient(SUPABASE_URL || '', SUPABASE_SERVICE_ROLE_KEY || '', {
   auth: { persistSession: false },
 });
 

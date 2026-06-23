@@ -1,32 +1,42 @@
+const dotenv = require('dotenv');
+
+// IMPORTANT: Load .env BEFORE requiring any module that reads process.env at load time
+dotenv.config({ path: __dirname + '/../.env' });
+
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const { connectMongo } = require('./mongo');
 const { verifyBucket } = require('./supabase');
-
-// Load environment variables from backend/.env
-dotenv.config({ path: __dirname + '/../.env' });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({
+const corsOptions = {
   origin: [
     'https://shorewin-lanka-frontend.vercel.app',
     'http://localhost:5173',
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
-}));
+};
+
+app.use(cors(corsOptions));
+
+// Explicitly handle OPTIONS preflight for all routes (required for CORS on Vercel)
+app.options('*', cors(corsOptions));
+
 app.use(express.json({ limit: '10mb' }));
 
-// Connect to MongoDB
+// Connect to MongoDB (cached — safe to call on every cold start)
 connectMongo();
 
-// Verify Supabase bucket is public on every startup — catches misconfiguration early
-verifyBucket().catch(err =>
-  console.error('[Supabase] Startup bucket verification failed:', err.message)
-);
+// Only verify Supabase bucket locally — skip on Vercel (async side-effect can hang cold start)
+if (!process.env.VERCEL) {
+  verifyBucket().catch(err =>
+    console.error('[Supabase] Startup bucket verification failed:', err.message)
+  );
+}
 
 // Routes
 const productRoutes = require('./routes/product.routes');
@@ -48,3 +58,4 @@ if (!process.env.VERCEL) {
 }
 
 module.exports = app;
+
