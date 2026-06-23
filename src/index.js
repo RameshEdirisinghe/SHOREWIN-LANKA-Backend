@@ -17,7 +17,7 @@ app.use(cors({
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
-}))
+}));
 app.use(express.json({ limit: '10mb' }));
 
 // Connect to MongoDB
@@ -40,6 +40,11 @@ app.get('/', (req, res) => {
   res.send('Spice Shop Backend is running');
 });
 
-app.listen(PORT, () => {
-  console.log(`Backend listening on http://localhost:${PORT}`);
-});
+// Export app for Vercel serverless; start server only when running locally
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Backend listening on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
