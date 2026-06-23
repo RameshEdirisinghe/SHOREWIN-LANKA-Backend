@@ -10,7 +10,14 @@ dotenv.config({ path: __dirname + '/../.env' });
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://shorewin-lanka-frontend.vercel.app',
+    'http://localhost:5173',
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+}))
 app.use(express.json({ limit: '10mb' }));
 
 // Connect to MongoDB
