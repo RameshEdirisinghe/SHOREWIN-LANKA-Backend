@@ -28,8 +28,17 @@ app.options('*', cors(corsOptions));
 
 app.use(express.json({ limit: '10mb' }));
 
-// Connect to MongoDB (cached — safe to call on every cold start)
-connectMongo();
+// Middleware: ensure MongoDB is connected before every request.
+// Uses cached connection — only truly async on the very first cold start.
+app.use(async (req, res, next) => {
+  try {
+    await connectMongo();
+    next();
+  } catch (err) {
+    console.error('DB connection middleware error:', err.message);
+    res.status(500).json({ error: 'Database connection failed' });
+  }
+});
 
 // Only verify Supabase bucket locally — skip on Vercel (async side-effect can hang cold start)
 if (!process.env.VERCEL) {

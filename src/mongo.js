@@ -21,7 +21,6 @@ const connectMongo = async () => {
     cached.promise = mongoose
       .connect(process.env.MONGO_URI, {
         dbName: process.env.DB_NAME,
-        bufferCommands: false,
       })
       .then((m) => {
         console.log('✅ MongoDB connected');
