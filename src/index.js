@@ -56,7 +56,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => {
-  res.send('Spice Shop Backend is running');
+  res.send('Shorewin Lanka Agro Backend is running');
 });
 
 // Export app for Vercel serverless; start server only when running locally
