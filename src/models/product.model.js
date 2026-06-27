@@ -24,6 +24,7 @@ const ProductSchema = new mongoose.Schema({
   ],
   certifications: [{ type: String }],
   active: { type: Boolean, default: true },
+  inStock: { type: Boolean, default: true },
   pitch: {
     title: { EN: { type: String }, SI: { type: String } },
     text: { EN: { type: String }, SI: { type: String } }

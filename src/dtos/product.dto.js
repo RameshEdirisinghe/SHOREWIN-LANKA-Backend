@@ -24,6 +24,7 @@ const productSchema = Joi.object({
   ),
   certifications: Joi.array().items(Joi.string()),
   active: Joi.boolean().default(true),
+  inStock: Joi.boolean().default(true),
   pitch: Joi.object({
     title: Joi.object({ EN: Joi.string().allow(''), SI: Joi.string().allow('') }).allow(null),
     text: Joi.object({ EN: Joi.string().allow(''), SI: Joi.string().allow('') }).allow(null),
